@@ -50,6 +50,7 @@ Needs: pip install anthropic python-dotenv + ANTHROPIC_API_KEY in .env
 
 import os, subprocess
 from pathlib import Path
+from typing import Optional
 
 try:
     import readline
@@ -93,7 +94,7 @@ def run_bash(command: str) -> str:
     except subprocess.TimeoutExpired:
         return "Error: Timeout (120s)"
 
-def run_read(path: str, limit: int | None = None) -> str:
+def run_read(path: str, limit: Optional[int] = None) -> str:
     try:
         lines = safe_path(path).read_text().splitlines()
         if limit and limit < len(lines):
