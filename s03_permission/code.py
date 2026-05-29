@@ -29,6 +29,7 @@ Builds on s02 (multi-tool). Usage:
 
 import os, subprocess
 from pathlib import Path
+from typing import Optional
 
 try:
     import readline
@@ -74,7 +75,7 @@ def run_bash(command: str) -> str:
         return "Error: Timeout (120s)"
 
 
-def run_read(path: str, limit: int | None = None) -> str:
+def run_read(path: str, limit: Optional[int] = None) -> str:
     try:
         lines = safe_path(path).read_text().splitlines()
         if limit and limit < len(lines):
@@ -148,7 +149,7 @@ TOOL_HANDLERS = {
 # Gate 1: Hard deny list — always forbidden
 DENY_LIST = ["rm -rf /", "sudo", "shutdown", "reboot", "mkfs", "dd if=", "> /dev/sda"]
 
-def check_deny_list(command: str) -> str | None:
+def check_deny_list(command: str) -> Optional[str]:
     for pattern in DENY_LIST:
         if pattern in command:
             return f"Blocked: '{pattern}' is on the deny list"
@@ -165,7 +166,7 @@ PERMISSION_RULES = [
      "message": "Potentially destructive command"},
 ]
 
-def check_rules(tool_name: str, args: dict) -> str | None:
+def check_rules(tool_name: str, args: dict) -> Optional[str]:
     for rule in PERMISSION_RULES:
         if tool_name in rule["tools"] and rule["check"](args):
             return rule["message"]
